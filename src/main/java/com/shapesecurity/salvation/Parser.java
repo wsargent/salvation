@@ -230,6 +230,9 @@ public class Parser {
                 case FrameAncestors:
                     result = new FrameAncestorsDirective(this.parseAncestorSourceList());
                     break;
+                case FrameSrc:
+                    result = new FrameSrcDirective(this.parseSourceList());
+                    break;
                 case ImgSrc:
                     result = new ImgSrcDirective(this.parseSourceList());
                     break;
@@ -242,6 +245,9 @@ public class Parser {
                     break;
                 case ObjectSrc:
                     result = new ObjectSrcDirective(this.parseSourceList());
+                    break;
+                case WorkerSrc:
+                    result = new WorkerSrcDirective(this.parseSourceList());
                     break;
                 case PluginTypes:
                     Set<MediaType> mediaTypes = this.parseMediaTypeList();
@@ -291,11 +297,6 @@ public class Parser {
                         "The allow directive has been replaced with default-src and is not in the CSP specification.");
                     this.eat(DirectiveValueToken.class);
                     throw INVALID_DIRECTIVE_NAME;
-                case FrameSrc:
-                    this.warn(token,
-                        "The frame-src directive is deprecated as of CSP version 1.1. Authors who wish to govern nested browsing contexts SHOULD use the child-src directive instead.");
-                    result = new FrameSrcDirective(this.parseSourceList());
-                    break;
                 case Options:
                     this.error(token,
                         "The options directive has been replaced with 'unsafe-inline' and 'unsafe-eval' and is not in the CSP specification.");

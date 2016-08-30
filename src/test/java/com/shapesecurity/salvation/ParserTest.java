@@ -665,10 +665,7 @@ public class ParserTest extends CSPTest {
         Policy p1 = Parser.parse("frame-src aaa", "https://origin", notices);
 
         assertEquals("frame-src aaa", p1.show());
-        assertEquals(1, notices.size());
-        assertEquals(
-            "The frame-src directive is deprecated as of CSP version 1.1. Authors who wish to govern nested browsing contexts SHOULD use the child-src directive instead.",
-            notices.iterator().next().message);
+        assertEquals(0, notices.size());
     }
 
     @Test public void testAllowDirective() {
@@ -804,6 +801,22 @@ public class ParserTest extends CSPTest {
 
     }
 
+    @Test public void testWorkerSrc() {
+        Policy p;
+        ArrayList<Notice> notices = new ArrayList<>();
+        p = parseWithNotices("worker-src a", notices);
+        assertEquals(1, p.getDirectives().size());
+        assertEquals(0, notices.size());
+        assertEquals("worker-src a", p.show());
+
+
+        notices = new ArrayList<>();
+        p = parseWithNotices("  Worker-src    a", notices);
+        assertEquals(1, p.getDirectives().size());
+        assertEquals(0, notices.size());
+        assertEquals("worker-src a", p.show());
+    }
+
     @Test public void testParseMulti() {
         List<Policy> pl;
         ArrayList<Notice> notices;
@@ -846,10 +859,7 @@ public class ParserTest extends CSPTest {
         assertEquals(2, pl.size());
         assertEquals("script-src a", pl.get(0).show());
         assertEquals("frame-src b", pl.get(1).show());
-        assertEquals(1, notices.size());
-        assertEquals(
-            "1:15: The frame-src directive is deprecated as of CSP version 1.1. Authors who wish to govern nested browsing contexts SHOULD use the child-src directive instead.",
-            notices.get(0).show());
+        assertEquals(0, notices.size());
 
         pl.clear();
         notices.clear();

@@ -20,10 +20,19 @@ public abstract class Directive<Value extends DirectiveValue> implements Show {
         return fetchDirectives;
     }
 
+    public static List<Class<? extends Directive>> getNestedContextDirectives() {
+        return nestedContextDirectives;
+    }
+
     static List<Class<? extends Directive>> fetchDirectives = new ArrayList<>();
-    static public final int FETCH_DIRECIVE_COUNT;
+    static List<Class<? extends Directive>> nestedContextDirectives = new ArrayList<>();
+    static public final int FETCH_DIRECTIVE_COUNT;
+    static public final int NESTED_CONTEXT_DIRECTIVE_COUNT;
 
     static void register(Class<? extends Directive> directiveClass) {
+        if (NestedContextDirective.class.isAssignableFrom(directiveClass) && directiveClass != ChildSrcDirective.class) {
+            nestedContextDirectives.add(directiveClass);
+        }
         if (FetchDirective.class.isAssignableFrom(directiveClass) && directiveClass != DefaultSrcDirective.class) {
             fetchDirectives.add(directiveClass);
         }
@@ -43,6 +52,7 @@ public abstract class Directive<Value extends DirectiveValue> implements Show {
         register(DefaultSrcDirective.class);
         register(ReferrerDirective.class);
         register(FrameSrcDirective.class);
+        register(WorkerSrcDirective.class);
         register(ReportUriDirective.class);
         register(ReportToDirective.class);
         register(RequireSriForDirective.class);
@@ -53,7 +63,8 @@ public abstract class Directive<Value extends DirectiveValue> implements Show {
         register(UpgradeInsecureRequestsDirective.class);
         register(BlockAllMixedContentDirective.class);
         register(BaseUriDirective.class);
-        FETCH_DIRECIVE_COUNT = fetchDirectives.size();
+        FETCH_DIRECTIVE_COUNT = fetchDirectives.size();
+        NESTED_CONTEXT_DIRECTIVE_COUNT = nestedContextDirectives.size();
 
     }
 
